@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>three.js canvas - geometry - text</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+      body {
+        font-family: Monospace;
+        background-color: #f0f0f0;
+        margin: 0px;
+        overflow: hidden;
+      }
+    </style>
+  
+
+
+    <script src="/static/three.js/build/three.min.js"></script>
+
+    <script src="/static/three.js/examples/js/renderers/Projector.js"></script>
+    <script src="/static/three.js/examples/js/renderers/CanvasRenderer.js"></script>
+
+    <script src="/static/three.js/examples/js/libs/stats.min.js"></script>
+
+    <!-- load the font file from canvas-text -->
+
+    <script src="/static/three.js/examples/fonts/helvetiker_regular.typeface.js"></script>
+
+    <script src="/static/three.js/examples/js/controls/FirstPersonControls.js"></script>
+
+    <script src="/static/three.js/examples/js/shaders/UnpackDepthRGBAShader.js"></script>
+
+
+    <script src="/static/three.js/examples/js/Detector.js"></script>
+    <script src="/static/three.js/examples/js/libs/stats.min.js"></script>
+    <script src="/static/three.js/examples/js/loaders/OBJLoader.js"></script>
+
+    <script src="/static/three.js/examples/js/loaders/gltf/glTF-parser.js"></script>
+    <script src="/static/three.js/examples/js/loaders/gltf/glTFLoader.js"></script>
+    <script src="/static/three.js/examples/js/loaders/gltf/glTFLoaderUtils.js"></script>
+    <script src="/static/three.js/examples/js/loaders/gltf/glTFAnimation.js"></script>
+
+    <script src="/static/three.js/examples/fonts/helvetiker_bold.typeface.js"></script>
+
+    <script src="/static/three.js/examples/fonts/helvetiker_bold.typeface.js"></script>
+
+    <link href="/static/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/bootstrap-3.3.5-dist/css/bootstrap-theme.min.css" rel="stylesheet">
+
+  </head>
+
+
+  <style>
+
+  html, body, .container-fluid {
+    /*height:100%;*/
+    /*background-color: #141414;*/
+}
+.menusrow {
+    height: 80%;
+}
+.navrow {
+    height: 5%;
+}
+.brandrow {
+    height: 15%;
+}
+.menusrow .row {
+    height: 20%;
+}
+.border1 {
+    text-align: center;
+    padding: 10px;
+    background-color: #CEE3F6;
+    border: 1px solid black;
+    height: 100%;
+}
+.border2 {
+    text-align: center;
+    padding: 10px;
+    background-color: #F5ECCE;
+    border: 1px solid black;
+    height: 100%;
+}
+.border3 {
+    text-align: center;
+    padding: 10px;
+    background-color: green;
+    border: 1px solid black;
+    height: 100%;
+}
+.border4 {
+    text-align: center;
+    padding: 10px;
+    background-color: orange;
+    border: 1px solid black;
+    height: 100%;
+}
+.border5 {
+    text-align: center;
+    padding: 10px;
+    background-color: blue;
+    border: 1px solid black;
+    color: white;
+    height: 100%;
+}
+
+  * {
+    font-family: Verdana, Arial, sans-serif;
+  }
+  a:link {
+    color:#000;
+    text-decoration: none;
+  }
+  a:visited {
+    color:#000;
+  }
+  a:hover {
+    color:#33F;
+  }
+  .center {
+    padding: 10px;
+    text-align: center;
+  }
+  .final {
+    color: black;
+    padding-right: 3px; 
+  }
+  .interim {
+    color: gray;
+  }
+  .info {
+    font-size: 14px;
+    text-align: center;
+    color: #777;
+    display: none;
+  }
+  .right {
+    float: right;
+  }
+  .sidebyside {
+    display: inline-block;
+    width: 35%;
+    min-height: 40px;
+    text-align: left;
+    vertical-align: top;
+  }
+  #headline {
+    font-size: 400px;
+    font-weight: 300;
+  }
+  #info {
+    font-size: 20px;
+    text-align: center;
+    color: #777;
+    visibility: hidden;
+  }
+  #results {
+    font-size: 15px;
+    font-weight: bold;
+    border: 1px solid #ddd;
+    padding: 20px;
+    text-align: left;
+    min-height: 3px;
+  }
+  #start_button {
+    border: 0;
+    background-color:transparent;
+    padding: 0;
+  }
+</style>
+
+  <body >
+
+
+<!-- <h1 class="center" id="headline">
+  <a href="http://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html">
+    Web Speech API</a> Demonstration {{fixed_poem}}
+    </h1>
+ -->
+
+ <div class="container">
+    <div class="row show-grid">
+      <div class="col-md-12"><h4>Recita con cuidado</h3></div>
+    </div>
+
+<div id="info">
+  <p id="info_start">Click on the microphone icon y empieza a hablar!</p>
+  <p id="info_speak_now">Speak now.</p>
+  <p id="info_no_speech">No speech was detected. You may need to adjust your
+    <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">
+      microphone settings</a>.</p>
+  <p id="info_no_microphone" style="display:none">
+    No microphone was found. Ensure that a microphone is installed and that
+    <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">
+    microphone settings</a> are configured correctly.</p>
+  <p id="info_allow">Click the "Allow" button above to enable your microphone.</p>
+  <p id="info_denied">Permission to use microphone was denied.</p>
+  <p id="info_blocked">Permission to use microphone is blocked. To change,
+    go to chrome://settings/contentExceptions#media-stream</p>
+  <p id="info_upgrade">Web Speech API is not supported by this browser.
+     Upgrade to <a href="//www.google.com/chrome">Chrome</a>
+     version 25 or later.</p>
+</div>
+<div class="right">
+  <button id="start_button" onclick="startButton(event)">
+    <img id="start_img" src="/static/mic_gifs/mic.gif" alt="Start"></button>
+</div>
+<div id="results">
+  <span id="final_span" class="final"></span>
+  <span id="interim_span" class="interim"></span>
+  <p>
+</div>
+
+<div class="container">
+    <div class="row show-grid">
+      <div class="col-md-7"><h3>Recita con cuidado:</h3></div>
+      <!-- <div class="col-md-4"><h3>Dale instrucciones a tu compañero:</h4></div> -->
+    </div>
+    <div class="row show-grid">
+
+      <div class="col-md-8 col-xs-8 border1"><h3>Tres tristes tigres comen trigo en un trigal</h2></div>
+      <div class="col-md-4 col-xs-4 border1"><h3>trigo</h3></div>
+      <!-- <div class="col-md-5 border2"><h4>Esperando...</h4></div> -->
+    </div>
+    <div class="row show-grid">
+      <div class="col-md-12">.</div>
+    </div>
+  </div>
+
+
+
+
+<script>
+
+showInfo('info_start');
+
+var create_email = false;
+var final_transcript = '';
+var recognizing = false;
+var ignore_onend;
+var start_timestamp;
+if (!('webkitSpeechRecognition' in window)) {
+  upgrade();
+} else {
+  start_button.style.display = 'inline-block';
+  var recognition = new webkitSpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  recognition.onstart = function() {
+    recognizing = true;
+    showInfo('info_speak_now');
+    start_img.src = '/static/mic_gifs/mic-animate.gif';
+  };
+
+  recognition.onerror = function(event) {
+    if (event.error == 'no-speech') {
+      start_img.src = '/static/mic_gifs/mic.gif';
+      showInfo('info_no_speech');
+      ignore_onend = true;
+    }
+    if (event.error == 'audio-capture') {
+      start_img.src = '/static/mic_gifs/mic.gif';
+      showInfo('info_no_microphone');
+      ignore_onend = true;
+    }
+    if (event.error == 'not-allowed') {
+      if (event.timeStamp - start_timestamp < 100) {
+        showInfo('info_blocked');
+      } else {
+        showInfo('info_denied');
+      }
+      ignore_onend = true;
+    }
+  };
+
+  recognition.onend = function() {
+    console.log("onend");
+    recognizing = false;
+    if (ignore_onend) {
+      return;
+    }
+    start_img.src = '/static/mic_gifs/mic.gif';
+    if (!final_transcript) {
+      showInfo('info_start');
+      return;
+    }
+    showInfo('');
+    if (window.getSelection) {
+      window.getSelection().removeAllRanges();
+      var range = document.createRange();
+      range.selectNode(document.getElementById('final_span'));
+      window.getSelection().addRange(range);
+    }
+    if (create_email) {
+      create_email = false;
+      createEmail();
+    }
+  };
+
+  recognition.onresult = function(event) {
+    var interim_transcript = '';
+    for (var i = event.resultIndex; i < event.results.length; ++i) {
+      if (event.results[i].isFinal) {
+        final_transcript += event.results[i][0].transcript;
+      } else {
+        interim_transcript += event.results[i][0].transcript;
+      }
+    }
+    final_transcript = capitalize(final_transcript);
+    final_span.innerHTML = linebreak(final_transcript);
+    if (final_span.innerHTML != ''){console.log(final_span.innerHTML);}
+    interim_span.innerHTML = linebreak(interim_transcript);
+    if (final_transcript || interim_transcript) {
+      showButtons('inline-block');
+    }
+  };
+}
+
+function upgrade() {
+  start_button.style.visibility = 'hidden';
+  showInfo('info_upgrade');
+}
+
+var two_line = /\n\n/g;
+var one_line = /\n/g;
+function linebreak(s) {
+  return s.replace(two_line, '<p></p>').replace(one_line, '<br>');
+}
+
+var first_char = /\S/;
+function capitalize(s) {
+  return s.replace(first_char, function(m) { return m.toUpperCase(); });
+}
+
+
+function startButton(event) {
+  if (recognizing) {
+    recognition.stop();
+    return;
+  }
+  final_transcript = '';
+  recognition.lang = 'es-PE';
+  console.log(recognition.lang);
+  recognition.start();
+  ignore_onend = false;
+  final_span.innerHTML = '';
+  interim_span.innerHTML = '';
+  start_img.src = '/static/mic_gifs/mic-slash.gif';
+  showInfo('info_allow');
+  // showButtons('none');
+  start_timestamp = event.timeStamp;
+}
+
+function showInfo(s) {
+  if (s) {
+    for (var child = info.firstChild; child; child = child.nextSibling) {
+      if (child.style) {
+        child.style.display = child.id == s ? 'inline' : 'none';
+      }
+    }
+    info.style.visibility = 'visible';
+  } else {
+    info.style.visibility = 'hidden';
+  }
+}
+
+var current_style;
+function showButtons(style) {
+  if (style == current_style) {
+    return;
+  }
+  current_style = style;
+}
+
+</script>
+
+
+
+
+    <script>
+
+      if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+      /// DECLARACIONES 
+
+      var SHADOW_MAP_WIDTH = 2048, SHADOW_MAP_HEIGHT = 1024;
+
+      var HUD_MARGIN = 0.05;
+
+      var SCREEN_WIDTH = window.innerWidth/2;
+      var SCREEN_HEIGHT = window.innerHeight/2;
+      var FLOOR = -250;
+      var camera, controls, scene, renderer, scene2 , renderer2;
+      var container, stats;
+      var NEAR = 10, FAR = 4000;
+      var sceneHUD, cameraOrtho, hudMesh;
+      var morph, morphs = [];
+      var light , light2;
+      var clock = new THREE.Clock();
+      var showHUD = false;
+      var velocity = new THREE.Vector3();
+
+      var moveForward = false;
+      var moveBackward = false;
+      var moveLeft = false;
+      var moveRight = false;
+
+      var shoot = false;
+      var canShoot = true;
+      var there_shots = false;
+      var shots = new Array();
+      var texture , texture2;
+
+      var velocities = [];
+      var houses = [];
+
+      var enemigos = [];
+
+      var reiniciados = 0;
+
+
+//////////////////////////////////////////////////////////////
+
+      var poema = "{{poema}}";
+
+      var group, text;
+
+      var targetRotation = 0;
+      var targetRotationOnMouseDown = 0;
+
+      var mouseX = 0;
+      var mouseXOnMouseDown = 0;
+
+      var windowHalfX = window.innerWidth / 2;
+      var windowHalfY = window.innerHeight / 2;
+
+      var vidas = 2;
+
+      var vida_casa1 , vida_casa2;
+      var vida_casas = [];
+      var container_vidas = [];
+
+      var _boss;
+
+      SEPARATION = 200,
+      AMOUNTX = 10,
+      AMOUNTY = 10,
+
+      init();
+      animate();
+
+      function init() {
+
+        var separation = 100, amountX = 50, amountY = 50,
+        particles, particle;
+
+        container = document.createElement( 'div' );
+        document.body.appendChild( container );
+
+        var info = document.createElement( 'div' );
+        info.style.position = 'absolute';
+        info.style.top = '0px';
+        info.style.width = '100%';
+        info.style.textAlign = 'center';
+        // info.innerHTML = 'Simple Dynamic 3D Text Example by <a href="http://www.lab4games.net/zz85/blog">zz85</a><br>Drag to spin the text' ;
+        container.appendChild( info );
+
+        camera = new THREE.PerspectiveCamera( 50, SCREEN_WIDTH / SCREEN_HEIGHT, NEAR, FAR);
+        camera.position.set( 0, 000, 1450 );
+        camera.rotation.x -= 0.5;
+
+
+        scene = new THREE.Scene();
+        scene2 = new THREE.Scene();
+        scene2.fog = new THREE.Fog( 0x59472a, -500, FAR );
+
+        // LIGHTS
+
+        var ambient = new THREE.AmbientLight( 0x444444 );
+        scene2.add( ambient );
+
+        light = new THREE.SpotLight( 0xffffff, 0.5, 0, Math.PI / 2, 1 );
+        light.position.set( 0, 1500, 1000 );
+        light.target.position.set( 0, 0, 0 );
+
+        light.castShadow = true;
+
+        light.shadowCameraNear = 1200;
+        light.shadowCameraFar = 1800;
+        light.shadowCameraFov = 50;
+
+        //light.shadowCameraVisible = true;
+
+        light.shadowBias = 0.0001;
+        light.shadowDarkness = 0.5;
+
+        light.shadowMapWidth = SHADOW_MAP_WIDTH;
+        light.shadowMapHeight = SHADOW_MAP_HEIGHT;
+
+        scene2.add( light );
+
+        ////////////////////////
+
+
+
+
+        var onKeyDown = function ( event ) {
+
+          switch ( event.keyCode ) {
+
+            case 38: // up
+            case 87: // w
+              moveForward = true;
+              break;
+
+            case 37: // left
+            case 65: // a
+              moveLeft = true; break;
+
+            case 40: // down
+            case 83: // s
+              moveBackward = true;
+              break;
+
+            case 39: // right
+            case 68: // d
+              moveRight = true;
+              break;
+
+            case 32: // space
+              if ( canShoot === true ) shoot = true;
+              canShoot = false;
+              break;
+
+          }
+
+        };
+
+        var onKeyUp = function ( event ) {
+
+          switch( event.keyCode ) {
+
+            case 38: // up
+            case 87: // w
+              moveForward = false;
+              console.log("up");
+              break;
+
+            case 37: // left
+            case 65: // a
+              moveLeft = false;
+              break;
+
+            case 40: // down
+            case 83: // s
+              moveBackward = false;
+              break;
+
+            case 39: // right
+            case 68: // d
+              moveRight = false;
+              break;
+
+            case 32: // space
+              canShoot = true;
+              break;
+
+          }
+
+        };
+
+        document.addEventListener( 'keydown', onKeyDown, false );
+        document.addEventListener( 'keyup', onKeyUp, false );
+
+        window.addEventListener( 'mousedown', onDocumentMouseDown, false );
+
+
+
+        // Get text from hash
+
+        var theText = poema;
+        var trap_word = "{{trap_word}}";
+
+
+        var hash = document.location.hash.substr( 1 );
+
+        if ( hash.length !== 0 ) {
+
+          theText = hash;
+
+        }
+
+
+        var text3d = new THREE.TextGeometry( theText, {
+
+          size: 40,
+          height: 5,
+          curveSegments: 2,
+          font: "helvetiker"
+
+        });
+
+        var trap_word3d = new THREE.TextGeometry(trap_word, {
+          size: 40,
+          height: 5,
+          curveSegments: 2,
+          font: "helvetiker"
+        });
+
+        text3d.computeBoundingBox();
+        var centerOffset = -0.9 * ( text3d.boundingBox.max.x - text3d.boundingBox.min.x );
+
+        var textMaterial = new THREE.MeshBasicMaterial( { color:  0x2E2E2E, overdraw: 0.5 } );
+        text = new THREE.Mesh( text3d, textMaterial );
+
+        text.position.x = centerOffset;
+        text.position.y = 100;
+        text.position.z = 0;
+
+        text.scale.y = 4;
+
+        text.rotation.x = 0;
+        text.rotation.y = Math.PI * 2;
+
+        trap_word3d.computeBoundingBox();
+        var centerOffset = 0.9*(trap_word3d.boundingBox.max.x - trap_word3d.boundingBox.min.x);
+        var textMaterial = new THREE.MeshBasicMaterial({color: 0xFF0000, overdraw: 0.5});
+        text2 = new THREE.Mesh( trap_word3d, textMaterial);
+
+        text2.position.x = centerOffset;
+        text2.position.y = 100;
+        text2.position.z = 0;
+
+        text2.scale.y = 4;
+
+        text2.rotation.x=0;
+        text2.rotation.y = Math.PI *2;
+
+        group2 = new THREE.Group();
+        group = new THREE.Group();
+        
+        group2.add( text );
+        group2.add( text2);
+
+        scene.add( group2 );
+
+        createScene();
+
+        renderer = new THREE.WebGLRenderer( {antialias:true});
+        renderer.setClearColor( 0xA4A4A4 );
+        renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setSize( window.innerWidth, window.innerHeight/8 );
+
+        // container.appendChild( renderer.domElement );
+
+        renderer2 = new THREE.WebGLRenderer();
+        renderer2.setPixelRatio( window.devicePixelRatio );
+        renderer2.setSize( window.innerWidth, window.innerHeight );
+        container.appendChild( renderer2.domElement );
+
+        renderer2.autoClear = false;
+        // renderer.autoClear = false;
+
+
+        renderer2.shadowMap.enabled = true;
+        renderer2.shadowMap.type = THREE.PCFShadowMap;
+        // renderer.shadowMap.enabled = true;
+        // renderer.shadowMap.type = THREE.PCFShadowMap;
+
+
+        scene2.add(group);
+        // container.appendChild( stats.domElement );
+
+        window.addEventListener( 'resize', onWindowResize, false );
+        window.addEventListener( 'keydown', onKeyDown, false );
+
+      }
+
+      function onWindowResize() {
+
+        windowHalfX = window.innerWidth / 2;
+        windowHalfY = window.innerHeight / 2;
+
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize( window.innerWidth, window.innerHeight );
+
+      }
+
+      //
+
+      function onDocumentMouseDown( event ) {
+
+
+        if ( canShoot === true ) shoot = true;
+        canShoot = false;
+
+        // event.preventDefault();
+
+        console.log("click");
+
+        // document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+        document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+        document.addEventListener( 'mouseout', onDocumentMouseOut, false );
+
+        mouseXOnMouseDown = event.clientX - windowHalfX;
+        targetRotationOnMouseDown = targetRotation;
+
+      }
+
+      function onDocumentMouseUp( event ) {
+
+        console.log("fin click");
+        canShoot = true;
+
+
+        document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+        document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+        document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
+
+      }
+
+      function onDocumentMouseMove( event ) {
+
+        mouseX = event.clientX - windowHalfX;
+        mouseY = event.clientY - windowHalfY;
+
+        targetRotation = targetRotationOnMouseDown + ( mouseX - mouseXOnMouseDown ) * 0.02;
+
+      }
+
+
+      function onDocumentMouseOut( event ) {
+
+        document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+        document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+        document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
+
+      }
+
+      function onDocumentTouchStart( event ) {
+
+        if ( event.touches.length == 1 ) {
+
+          event.preventDefault();
+
+          mouseXOnMouseDown = event.touches[ 0 ].pageX - windowHalfX;
+          targetRotationOnMouseDown = targetRotation;
+
+          console.log("click!");
+
+        }
+
+      }
+
+      function onDocumentTouchMove( event ) {
+
+        if ( event.touches.length == 1 ) {
+
+          event.preventDefault();
+
+          mouseX = event.touches[ 0 ].pageX - windowHalfX;
+          targetRotation = targetRotationOnMouseDown + ( mouseX - mouseXOnMouseDown ) * 0.05;
+
+        }
+
+      }
+
+//////////////////CREAR ESCENA/////////////
+
+      function createScene(){
+
+        // GROUND
+
+        function addMorph( geometry, speed, duration, x, y, z, materials ) {
+
+
+
+          var material = materials[0];
+          material.morphTargets = true;
+          material.color.setHex( 0xffffff );
+          material.color.setHex( 0xff0000 );
+
+          var textMaterial = new THREE.MeshPhongMaterial( { color: 0xff0000, specular: 0xffffff } );
+          textMaterial.morphTargets = true;
+
+
+          var texture3 = new THREE.ImageUtils.loadTexture('/static/three.js/examples/models/collada/monster/monster.jpg', {}, function() {
+            renderer.render(scene);
+          });
+
+          var matmat = new THREE.MeshBasicMaterial({map: texture3});
+          matmat.morphTargets = true;
+
+          var meshAnim = new THREE.MorphAnimMesh( geometry , matmat );
+
+          meshAnim.speed = speed;
+          meshAnim.duration = duration;
+          meshAnim.time = 600 * Math.random();
+
+          meshAnim.position.set( x, y, z );
+          meshAnim.rotation.y = Math.PI*1.5;
+
+          // ESCALANDO
+          meshAnim.scale.x = 0.05;
+          meshAnim.scale.y = 0.05;
+          meshAnim.scale.z = 0.05;
+
+          meshAnim.castShadow = true;
+          meshAnim.receiveShadow = true;
+
+          scene2.add( meshAnim );
+
+          var objetivo = 1;
+          if(meshAnim.position.x > 0){
+            objetivo = 0;
+          }
+
+          var enemigo = {obj: meshAnim, velocity : 1+Math.random() , tamano : 1, target: objetivo, status : 1, partida:objetivo, life:1, last_life:1};
+
+          enemigos.push(enemigo);
+
+        }
+
+        function createBoss(geometry, materials){
+          var material = materials[0];
+          material.morphTargets = true;
+
+          var meshAnim = new THREE.MorphAnimMesh(geometry , material);
+          meshAnim.speed = 50;
+          meshAnim.duration = 1000;
+          meshAnim.time = 600 * Math.random();
+
+          meshAnim.position.set(-200,-600,0);
+          meshAnim.rotation.y = Math.PI*1.5;
+
+          meshAnim.scale.x = 0.2;
+          meshAnim.scale.y = 0.2;
+          meshAnim.scale.z = 0.25;
+
+          meshAnim.castShadow = true;
+          meshAnim.receiveShadow = true;
+
+          objetivo = Math.random() >= 0.5;
+
+          scene2.add(meshAnim);
+
+          _boss = {obj: meshAnim , velocity: 0, tamano : 1, target: objetivo, status : 0 };
+
+        }
+
+        function morphColorsToFaceColors( geometry ) {
+
+          if ( geometry.morphColors && geometry.morphColors.length ) {
+
+            var colorMap = geometry.morphColors[ 0 ];
+
+            for ( var i = 0; i < colorMap.colors.length; i ++ ) {
+
+              geometry.faces[ i ].color = colorMap.colors[ i ];
+
+            }
+
+          }
+
+        }
+
+
+        var geometry = new THREE.PlaneBufferGeometry( 10, 10 );
+
+        texture = THREE.ImageUtils.loadTexture('/static/three.js/examples/textures/terrain/backgrounddetailed6.jpg', {}, function() {renderer2.render(scene2); });
+
+
+
+        var planeMaterial = new THREE.MeshBasicMaterial({map:texture});
+
+        var ground = new THREE.Mesh( geometry, planeMaterial );
+
+
+        ground.position.set( 0, FLOOR, 0 );
+        ground.rotation.x = - Math.PI / 2;
+        ground.scale.set( 250, 250, 250 );
+
+        ground.castShadow = true;
+        ground.receiveShadow = true;
+
+        scene2.add( ground );
+
+        // TEXT
+
+        var textGeo = new THREE.TextGeometry( "!", {
+
+          size: 400,
+          height: 50,
+          curveSegments: 12,
+
+          font: "helvetiker",
+          weight: "bold",
+          style: "normal",
+
+          bevelThickness: 2,
+          bevelSize: 5,
+          bevelEnabled: true
+
+        });
+
+        textGeo.computeBoundingBox();
+        var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
+
+        var textMaterial = new THREE.MeshPhongMaterial( { color: 0xff0000, specular: 0xffffff } );
+
+        var mesh = new THREE.Mesh( textGeo, textMaterial );
+        mesh.position.x = centerOffset;
+        mesh.position.y = FLOOR ;
+        mesh.position.z = 500;
+
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+
+        scene2.add( mesh );
+
+        var loader = new THREE.JSONLoader();
+
+        var loader = new THREE.JSONLoader();
+
+        var manager = new THREE.LoadingManager();
+
+        manager.onProgress = function ( item, loaded, total ) {
+
+          console.log( item, loaded, total );
+
+        };
+
+        var texture = new THREE.Texture();
+        var texture2 = new THREE.Texture();
+
+        var onProgress = function ( xhr ) {
+          if ( xhr.lengthComputable ) {
+            var percentComplete = xhr.loaded / xhr.total * 100;
+            console.log( Math.round(percentComplete, 2) + '% downloaded' );
+          }
+        };
+
+        var onError = function ( xhr ) {
+        };
+
+        var loader2 = new THREE.ImageLoader( manager );
+        loader2.load( '/static/three.js/examples/textures/metal.jpg', function ( image ) {
+
+          texture.image = image;
+          texture.needsUpdate = true;
+
+        } );
+
+        group = new THREE.Group();
+        group_enemies = new THREE.Group();
+        group_builds = new THREE.Group();
+        group_ia = new THREE.Group();
+
+        var loader2 = new THREE.OBJLoader( manager );
+        loader2.load( '/static/three.js/examples/obj/male02/Tank_M1A1.obj', function ( object ) {
+
+          object.traverse( function ( child ) {
+
+            if ( child instanceof THREE.Mesh ) {
+
+              child.material.map = texture;
+              child.castShadow = true;
+            }
+          } );
+
+          object.position.y = -220;
+          object.scale.x = 0.4;
+          object.scale.y = 0.4;
+          object.scale.z = 0.4;
+
+          object.rotation.y = Math.PI;
+          group.add( object );
+
+        }, onProgress, onError );
+
+
+
+        var loader2 = new THREE.ImageLoader( manager );
+        loader2.load( '/static/three.js/examples/textures/sprite0.jpg', function ( image ) {
+
+          texture2.image = image;
+          texture2.needsUpdate = true;
+
+        } );
+
+
+        var loader2 = new THREE.OBJLoader( manager );
+        loader2.load( '/static/three.js/examples/obj/male02/Tank_M1A1.obj', function ( object ) {
+
+          object.traverse( function ( child ) {
+
+            if ( child instanceof THREE.Mesh ) {
+
+              child.material.map = texture2;
+              child.castShadow = true;
+            }
+          } );
+
+          object.position.y = -220;
+          object.position.x = 250;
+          object.position.z = 500;
+          object.scale.x = 0.4;
+          object.scale.y = 0.4;
+          object.scale.z = 0.4;
+
+
+          object.rotation.y = Math.PI;
+          group_ia.add( object );
+
+        }, onProgress, onError );
+
+
+        group.position.x = 0;
+        group.position.z = 800;
+
+        var loader2 = new THREE.OBJLoader( manager );
+        loader2.load( '/static/three.js/examples/obj/OLD_house_3D models/OLD_house/OLD_house.obj', function ( object ) {
+
+          object.traverse( function  (child) {
+            if(child instanceof THREE.Mesh) {
+              child.material.map = texture;
+              child.castShadow = true;
+            }
+          });
+
+          object.scale.x = 0.07;
+          object.scale.y = 0.07;
+          object.scale.z = 0.07;
+
+          object.rotation.y = Math.PI;
+
+          object.position.x += 300;
+          object.position.z += 1000;
+          object.position.y += FLOOR + 70;
+
+          console.log("objobjobj" , object);
+
+
+          group_builds.add( object );
+
+          houses.push({position : object.position , life:2000, material:object.children[0].material});
+
+        }, onProgress, onError);
+
+        loader2.load( '/static/three.js/examples/obj/OLD_house_3D models/OLD_house/OLD_house.obj', function ( object ) {
+
+          object.traverse( function  (child) {
+            if(child instanceof THREE.Mesh) {
+              child.material.map = texture;
+              child.castShadow = true;
+            }
+          });
+
+          object.scale.x = 0.07;
+          object.scale.y = 0.07;
+          object.scale.z = 0.07;
+
+          object.rotation.y = Math.PI;
+
+          // object.position.y = -200;
+          object.position.x -= 300;
+          object.position.z += 1000;
+          object.position.y += FLOOR + 70;
+
+          group_builds.add( object );
+
+          houses.push({position : object.position , life:2000, material:object.children[0].material});
+
+
+        }, onProgress, onError);
+
+        scene2.add(group);
+        scene2.add(group_enemies);
+        scene2.add(group_builds);
+        scene2.add(group_ia);
+
+        
+        // ZERLING
+
+        // for(var i = 0 ; i < 3 ; i++){
+
+            loader = new THREE.glTFLoader;
+
+            var loadStartTime = Date.now();
+            // var status = document.getElementById("status");
+            // status.innerHTML = "Loading...";
+
+            console.log("begin load zling");
+
+
+        var loader = new THREE.JSONLoader();
+        loader.load( "/static/three.js/examples/models/animated/monster/monster.js", function ( geometry , materials ) {
+          morphColorsToFaceColors( geometry );
+          for ( var i = - 800; i < 800; i += 70 ) {
+            addMorph( geometry, 50, 1000, i, FLOOR, i, materials );
+          }
+        } );
+
+/// BOSS
+
+      var loader = new THREE.JSONLoader();
+        loader.load( "/static/three.js/examples/models/animated/monster/monster.js", function ( geometry , materials ) {
+
+          createBoss(geometry , materials);
+
+        });
+
+
+        // LIFE BAR
+
+        var geometry = new THREE.PlaneGeometry( 120, -20, 1 );
+var material = new THREE.MeshBasicMaterial( {color: 0x000000, side: THREE.DoubleSide} );
+var plane = new THREE.Mesh( geometry, material );
+
+  plane.position.z += 1100;
+  plane.position.y -= 190;
+  plane.position.x -= 260;
+scene2.add( plane );
+
+      container_vidas.push(plane);
+
+
+        var geometry = new THREE.PlaneGeometry( 110, -12, 2 );
+var material = new THREE.MeshBasicMaterial( {color: 0x00ff00, side: THREE.DoubleSide} );
+vida_casa1 = new THREE.Mesh( geometry, material );
+
+  vida_casa1.position.z += 1100;
+  vida_casa1.position.y -= 190;
+  vida_casa1.position.x -= 260;
+scene2.add( vida_casa1 );
+
+ var geometry = new THREE.PlaneGeometry( 120, -20, 20 );
+var material = new THREE.MeshBasicMaterial( {color: 0x000000, side: THREE.DoubleSide} );
+var plane = new THREE.Mesh( geometry, material );
+
+  plane.position.z += 1100;
+  plane.position.y -= 190;
+  plane.position.x += 280;
+scene2.add( plane );
+
+      container_vidas.push(plane);
+
+
+        var geometry = new THREE.PlaneGeometry( 110, -12, 2 );
+var material = new THREE.MeshBasicMaterial( {color: 0x00ff00, side: THREE.DoubleSide} );
+vida_casa2 = new THREE.Mesh( geometry, material );
+
+  vida_casa2.position.z += 1100;
+  vida_casa2.position.y -= 190;
+  vida_casa2.position.x += 280;
+scene2.add( vida_casa2 );
+
+      vida_casas.push(vida_casa2);
+
+      vida_casas.push(vida_casa1);
+
+      };
+
+
+      //
+
+      ///////ANIMACION y RENDERING
+
+      function animate() {
+
+        // for(var i = 0 ; i < 5 ; i++){
+
+        //   morphs[i].position.x = 300;
+
+        // }
+
+
+
+        requestAnimationFrame( animate );
+        THREE.AnimationHandler.update( 0.1 );
+        THREE.glTFAnimator.update();
+
+        if ( moveForward ){
+          group.translateZ( -3 );
+        }
+
+        if ( moveBackward ) group.translateZ( 2 );
+
+        if ( moveLeft ) group.rotation.y += 0.02; 
+        if ( moveRight ) group.rotation.y -= 0.02; 
+
+        if (shoot){
+          shoot = false;
+
+          var c1 = 0xff0040, c2 = 0x0040ff, c3 = 0x80ff80, c4 = 0xffaa00, c5 = 0x00ffaa, c6 = 0xff1100;
+          var intensity = 1.0;
+          var distance = 100;
+
+          // shots.append(sphere.position)
+          var geometry_flat = new THREE.SphereGeometry( 8, 20, 16 );
+          var material = new THREE.MeshBasicMaterial( { color: 0xB40404, transparent: true, blending: THREE.AdditiveBlending , map:texture} );
+          var mesh = new THREE.Mesh( geometry_flat , material);
+  
+          var position_i_x = group.position.x;
+          var position_i_z = group.position.z;
+
+          var y_rotation = group.rotation.y;
+          mesh.rotation.y = y_rotation;
+
+          mesh.position.x = position_i_x;
+          mesh.position.y = -200;
+
+          mesh.scale.x = 0.5;
+          mesh.scale.y = 0.5;
+          mesh.scale.z = 0.5;
+
+
+          mesh.position.z = position_i_z;
+          mesh.translateZ(-60);
+
+          // console.log(group.position);          
+
+          scene2.add(mesh);
+
+
+          shots.push(mesh );
+
+          // console.log(shots.length);
+          // console.log(group.rotation);
+
+          // console.log(shots.length);
+
+          if(shots.length > 0){
+            there_shots = true;
+          }
+
+
+
+
+        }
+
+        for (var i = enemigos.length - 1; i >= 0; i--) {
+            enemigos[i].obj.material.color.setHex( 0xffffff );         
+        };
+
+        for (var i = houses.length - 1; i >= 0; i--) {
+            houses[i].material.color.setHex(0xffffff)
+
+        };
+
+        if(there_shots){
+            // console.log("entra!");
+          for (var i = 0; i < shots.length ; i++){
+            // shots[i].position.x += 1;
+
+            shots[i].translateZ( -20 )
+
+
+            if(shots[i].position.z < -2000){
+              delete shots[i];
+              shots.splice(i , 1);              
+              break;
+              console.log(shots.length);
+            }
+
+            for (var j = enemigos.length - 1; j >= 0; j--) {
+
+
+              dist = lineDistance( [enemigos[j].obj.position.x , enemigos[j].obj.position.z] , [shots[i].position.x , shots[i].position.z] );
+              if(dist < 50){
+
+                console.log("le dio a uno!");
+                shots[i].position.z = 2000;
+                delete shots[i];
+                
+                enemigos[j].obj.material.color.setHex( 0xff0000 );
+
+                shots.splice(i , 1);  
+
+                enemigos[j].life -= 1;
+
+                if(enemigos[j].life <= 0){
+                  enemigos[j].status = 0;   
+                  // enemigos[j]
+                }
+
+                reiniciados += 1;
+                break;
+
+              }
+              // console.log(dist);
+            };
+
+
+          
+          }
+
+          // scene.add(light1);
+
+        
+          // velocity.x -= 400.0 * delta;
+        }
+
+
+        if(vidas == 0){
+          // console.log("PERDISTE");
+          // alert("PERDISTE!");
+        }
+
+
+
+        render();
+        // stats.update();
+
+       }
+
+        
+function lineDistance( point1, point2 )
+{
+  var xs = 0;
+  var ys = 0;
+
+  xs = point2[0] - point1[0];
+  xs = xs * xs;
+
+  ys = point2[1] - point1[1];
+  ys = ys * ys;
+
+  return Math.sqrt( xs + ys );
+};
+
+
+      function render() {
+
+
+
+         var delta = clock.getDelta();
+        // for ( var i = 0; i < morphs.length; i ++ ) {
+        //   // console.log(morphs[0].position);
+        //   morph = morphs[ i ];
+        //   morph.updateAnimation( 1000 * delta );
+        //   morph.position.z += morph.speed * delta;
+        //   if ( morph.position.z  > 2000 )  {
+        //     morph.position.z = -10 - Math.random() * 500;
+        //   }
+        // }
+
+
+        if(reiniciados >= 100){
+          // console.log("GANASTE!");
+          _boss.status = 1;
+          // console.log("status boss" , _boss.status);
+
+        }
+
+
+        for (var i = enemigos.length - 1; i >= 0; i--) {
+          
+
+
+          enemigos[i].obj.updateAnimation(1000*delta);
+
+          if(enemigos[i].obj.position.z >= 2000){
+            console.log('reiniciar operaciones')
+            enemigos[i].status = 0;
+
+            reiniciados += 1;
+
+
+          }
+
+
+
+          if(enemigos[i].status == 0){ // SI se destruye al enemigo
+              enemigos[i].obj.position.z = -2000;
+
+              enemigos[i].velocity += Math.random();
+              enemigos[i].last_life += 1;
+              enemigos[i].life = enemigos[i].last_life;
+
+              enemigos[i].obj.scale.x += 0.01;
+              enemigos[i].obj.scale.y += 0.01;
+              enemigos[i].obj.scale.z += 0.01;
+
+              if(houses[ enemigos[i].target ].position.z == 5000){
+                enemigos[i].target =  1 - enemigos[i].target;
+              }
+              var pos_x = Math.random()*(1000);
+
+              if(enemigos[i].partida == 0) {
+                enemigos[i].obj.position.x = pos_x;
+              }
+              else {
+                // console.log("else");
+                enemigos[i].obj.position.x = -pos_x;
+
+              }
+
+              enemigos[i].status = 1;
+          }
+
+          // console.log(houses[enemigos[i].target].position.x);
+
+
+          var dist = lineDistance( [houses[enemigos[i].target].position.x, houses[enemigos[i].target].position.z ] ,  [enemigos[i].obj.position.x , enemigos[i].obj.position.z] );
+
+          // console.log(dist);
+
+          if(dist > 170){
+            var vec = [ (houses[enemigos[i].target].position.x - enemigos[i].obj.position.x)/dist , (houses[enemigos[i].target].position.z - enemigos[i].obj.position.z)/dist];
+            enemigos[i].obj.position.x += vec[0]*enemigos[i].velocity;
+            enemigos[i].obj.position.z += vec[1]*enemigos[i].velocity;
+
+
+            // enemigos[i].obj.material.color.setHex( 0xff0000 )
+
+          }
+          else{// Cuando bichos cerca de la casa
+            // houses[enemigos[i].target].life -= 1;
+
+            houses[enemigos[i].target].material.color.setHex(0xff0000)
+
+
+            console.log(houses[enemigos[i].target].children)
+
+
+
+            // console.log(houses[enemigos[i].target]);
+
+            vida_casas[enemigos[i].target].position.x -= 0.05;
+            // vida_casa1.translateX(0.01);
+            vida_casas[enemigos[i].target].scale.x -= 0.0009;
+
+            if(vida_casas[enemigos[i].target].scale.x <= 0){
+              houses[enemigos[i].target].life = -1  ;
+              scene2.remove(vida_casas[enemigos[i].target]);
+              scene2.remove(container_vidas[1-enemigos[i].target]);
+            }
+
+          }
+
+          // console.log(houses[1].life);
+
+
+
+        };
+
+        for (var i = houses.length - 1; i >=  0; i--) {
+          if(houses[i].life <= 0){
+
+            vidas -= 1;
+
+            houses[i].life = 1;
+            houses[i].position.z = 5000;
+          }
+          // console.log("life" , houses[i].life);
+        };
+
+        if(_boss.status == 1){
+          _boss.obj.position.y = -240;
+          _boss.obj.updateAnimation(1000*delta);
+          _boss.obj.position.z += 1;
+
+
+        }
+
+
+
+        // group_enemies.position.z += 1;
+
+
+        // camera.position.x += (mouseX - camera.position.x) * .05;
+
+        // group.rotation.y += ( targetRotation - group.rotation.y ) * 0.05;
+        // renderer.render( scene, camera );
+        renderer2.render( scene2, camera);
+
+      }
+
+    </script>
+
+
+
+
+  </body>
+</html>
+
+
+
