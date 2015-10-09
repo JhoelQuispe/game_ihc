@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+
+        <!-- COPYRIGHT: DONE BY JHOEL -->
+
     <title>three.js canvas - geometry - text</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
@@ -46,6 +49,11 @@
 
     <link href="/static/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/bootstrap-3.3.5-dist/css/bootstrap-theme.min.css" rel="stylesheet">
+    
+
+    <script src="/static/jquery/jquery-1.11.3.min.js" ></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
 
   </head>
 
@@ -168,6 +176,50 @@
     background-color:transparent;
     padding: 0;
   }
+
+
+ #blocker {
+ 
+       position: absolute;
+ 
+       width: 100%;
+       height: 100%;
+ 
+        background-color: rgba(0,0,0,0.7);
+ 
+        display: none;
+ 
+     }
+ 
+     #instructions {
+ 
+       width: 100%;
+       height: 100%;
+ 
+       display: -webkit-box;
+       display: -moz-box;
+       display: box;
+ 
+       -webkit-box-orient: horizontal;
+       -moz-box-orient: horizontal;
+       box-orient: horizontal;
+ 
+       -webkit-box-pack: center;
+       -moz-box-pack: center;
+       box-pack: center;
+ 
+       -webkit-box-align: center;
+       -moz-box-align: center;
+       box-align: center;
+ 
+       color: #ffffff;
+       text-align: center;
+ 
+       /*cursor: pointer;*/
+ 
+    }
+
+
 </style>
 
   <body >
@@ -179,14 +231,28 @@
     </h1>
  -->
 
+
+<div id="blocker">
+     
+      <!-- <div id="instructions">
+        <span style="font-size:40px">¡Invade!</span>
+        <br /> <br />
+        
+        <button onclick="regresar();">Regresar</button>
+      </div> -->
+ 
+    </div>
+
+
+
  <div class="container">
     <div class="row show-grid">
-      <div class="col-md-12"><h4>Recita con cuidado</h3></div>
+      <div class="col-md-12"><h6>.</h6></div>
     </div>
 
 <div id="info">
-  <p id="info_start">Click on the microphone icon y empieza a hablar!</p>
-  <p id="info_speak_now">Speak now.</p>
+  <p id="info_start"></p>
+  <p id="info_speak_now">Evita que los monstruos sigan creciendo leyendo correctamente las frases!</p>
   <p id="info_no_speech">No speech was detected. You may need to adjust your
     <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">
       microphone settings</a>.</p>
@@ -194,7 +260,7 @@
     No microphone was found. Ensure that a microphone is installed and that
     <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">
     microphone settings</a> are configured correctly.</p>
-  <p id="info_allow">Click the "Allow" button above to enable your microphone.</p>
+  <p id="info_allow">Haz click en el micro para empezar a hablar!</p>
   <p id="info_denied">Permission to use microphone was denied.</p>
   <p id="info_blocked">Permission to use microphone is blocked. To change,
     go to chrome://settings/contentExceptions#media-stream</p>
@@ -214,13 +280,14 @@
 
 <div class="container">
     <div class="row show-grid">
-      <div class="col-md-7"><h3>Recita con cuidado:</h3></div>
-      <!-- <div class="col-md-4"><h3>Dale instrucciones a tu compañero:</h4></div> -->
+      <div class="col-md-8"><h4>Recita con cuidado:</h4></div>
+      <div class="col-md-4"><h4>Evita decir:</h4></div>
     </div>
     <div class="row show-grid">
 
-      <div class="col-md-8 col-xs-8 border1"><h3>Tres tristes tigres comen trigo en un trigal</h2></div>
-      <div class="col-md-4 col-xs-4 border1"><h3>trigo</h3></div>
+      <div id="real_text" class="col-md-8 col-xs-8 "><h3>Tres tristes tigres comen trigo en un trigal</h3></div>
+      <div id="trapword" class="col-md-3 col-xs-3 "><h3>trigo</h3></div>
+      <div id="icon_result" class="col-md-1 col-xs-1"></div>
       <!-- <div class="col-md-5 border2"><h4>Esperando...</h4></div> -->
     </div>
     <div class="row show-grid">
@@ -232,6 +299,19 @@
 
 
 <script>
+
+$(document).ready(function(){
+
+
+
+
+});
+
+var poemas = ["Tres tristes tigres comen trigo en un trigal", "Pico poco pica picos pecas","Clavo clavito clavel clavo", "Un amigo es uno que lo sabe todo de ti y a pesar de ello te quiere", "Ama hasta que te duela. Si te duele es buena señal", "Un hermano puede no ser un amigo, pero un amigo será siempre un hermano"]
+var trapwords = ["trigo" , "picos","clavel", "quiere", "duele", "hermano" ];
+
+var index_poem = 0;
+
 
 showInfo('info_start');
 
@@ -248,10 +328,21 @@ if (!('webkitSpeechRecognition' in window)) {
   recognition.continuous = true;
   recognition.interimResults = true;
 
+
+
   recognition.onstart = function() {
     recognizing = true;
     showInfo('info_speak_now');
     start_img.src = '/static/mic_gifs/mic-animate.gif';
+            // $('#icon_result').prepend('<img id="theImg" src="/static/icons/Wrong-icon.png" width=50 />')
+
+          // index_poem += 1;
+          // $('#real_text').empty();
+          // $('#real_text').append(poemas[index_poem]);
+
+    // var ggwp = $('#trapword').text();
+    // console.log(ggwp);
+
   };
 
   recognition.onerror = function(event) {
@@ -277,6 +368,9 @@ if (!('webkitSpeechRecognition' in window)) {
 
   recognition.onend = function() {
     console.log("onend");
+
+      subir_archivo(final_span.innerHTML);
+
     recognizing = false;
     if (ignore_onend) {
       return;
@@ -293,10 +387,8 @@ if (!('webkitSpeechRecognition' in window)) {
       range.selectNode(document.getElementById('final_span'));
       window.getSelection().addRange(range);
     }
-    if (create_email) {
-      create_email = false;
-      createEmail();
-    }
+    
+
   };
 
   recognition.onresult = function(event) {
@@ -310,7 +402,15 @@ if (!('webkitSpeechRecognition' in window)) {
     }
     final_transcript = capitalize(final_transcript);
     final_span.innerHTML = linebreak(final_transcript);
-    if (final_span.innerHTML != ''){console.log(final_span.innerHTML);}
+    if (final_span.innerHTML != ''){
+
+
+      console.log(final_span.innerHTML);
+      
+
+
+
+    }
     interim_span.innerHTML = linebreak(interim_transcript);
     if (final_transcript || interim_transcript) {
       showButtons('inline-block');
@@ -318,10 +418,75 @@ if (!('webkitSpeechRecognition' in window)) {
   };
 }
 
+
 function upgrade() {
   start_button.style.visibility = 'hidden';
   showInfo('info_upgrade');
 }
+
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+  function subir_archivo(texto){
+    console.log('subir archivos')
+    csrf_ = getCookie('csrftoken');
+    var img = new Image();
+
+    // console.log(csrf_);
+    $.ajax({
+        url : "/analizar/",
+        type: "POST",
+        dataType: "json",
+        data : {
+          texto : texto, 
+          texto_real : $('#real_text').text(),
+          palabra : $('#trapword').text(),
+          csrfmiddlewaretoken: getCookie('csrftoken')
+        },
+        success : function(json){
+          var respuesta = json.respuesta;
+          console.log(respuesta);
+          valor_respuesta = respuesta;
+          if (respuesta == true) {
+            $('#icon_result').html("");
+            $('#icon_result').prepend('<img id="theImg" src="/static/icons/Check-icon.png" width=50 />')
+
+          }
+          else{
+            $('#icon_result').html("");
+
+            $('#icon_result').prepend('<img id="theImg" src="/static/icons/Wrong-icon.png" width=50 />')
+          }
+
+          index_poem += 1;
+          $('#real_text').html("");
+          $('#real_text').append("<h3>"+ poemas[index_poem] + "</h3>");
+
+          $('#trapword').html("");
+          $('#trapword').append("<h3>"+ trapwords[index_poem] + "</h3>");
+
+
+        },
+        error : function(xhr,errmsg,err) {
+          console.log(xhr.status + ": " + xhr.responseText);
+        }
+    });
+  };
+
 
 var two_line = /\n\n/g;
 var one_line = /\n/g;
@@ -420,6 +585,8 @@ function showButtons(style) {
 
       var reiniciados = 0;
 
+      var valor_respuesta = 0;
+
 
 //////////////////////////////////////////////////////////////
 
@@ -444,6 +611,9 @@ function showButtons(style) {
 
       var _boss;
 
+      var BOSS_LIFE = 70;
+      var MUERTES = 100;
+
       SEPARATION = 200,
       AMOUNTX = 10,
       AMOUNTY = 10,
@@ -452,6 +622,9 @@ function showButtons(style) {
       animate();
 
       function init() {
+
+
+
 
         var separation = 100, amountX = 50, amountY = 50,
         particles, particle;
@@ -501,16 +674,24 @@ function showButtons(style) {
 
         scene2.add( light );
 
+
+
         ////////////////////////
 
+       var listener = new THREE.AudioListener();
+       camera.add( listener );
 
+        var sound1 = new THREE.Audio( listener );
+       sound1.load( '/static/three.js/examples/sounds/358232_j_s_song.ogg' );
+       sound1.setRefDistance( 20 );
+       sound1.autoplay = true;
 
 
         var onKeyDown = function ( event ) {
 
           switch ( event.keyCode ) {
 
-            case 38: // up
+            // case 38: // up
             case 87: // w
               moveForward = true;
               break;
@@ -529,7 +710,7 @@ function showButtons(style) {
               moveRight = true;
               break;
 
-            case 32: // space
+            case 38: // space
               if ( canShoot === true ) shoot = true;
               canShoot = false;
               break;
@@ -542,7 +723,7 @@ function showButtons(style) {
 
           switch( event.keyCode ) {
 
-            case 38: // up
+            // case 38: // up
             case 87: // w
               moveForward = false;
               console.log("up");
@@ -563,7 +744,7 @@ function showButtons(style) {
               moveRight = false;
               break;
 
-            case 32: // space
+            case 38: // space
               canShoot = true;
               break;
 
@@ -647,6 +828,8 @@ function showButtons(style) {
         scene.add( group2 );
 
         createScene();
+
+        // COPYRIGHT: DONE BY JHOEL
 
         renderer = new THREE.WebGLRenderer( {antialias:true});
         renderer.setClearColor( 0xA4A4A4 );
@@ -834,7 +1017,7 @@ function showButtons(style) {
           meshAnim.duration = 1000;
           meshAnim.time = 600 * Math.random();
 
-          meshAnim.position.set(-200,-600,0);
+          meshAnim.position.set(-200,-600,-2000);
           meshAnim.rotation.y = Math.PI*1.5;
 
           meshAnim.scale.x = 0.2;
@@ -848,7 +1031,7 @@ function showButtons(style) {
 
           scene2.add(meshAnim);
 
-          _boss = {obj: meshAnim , velocity: 0, tamano : 1, target: objetivo, status : 0 };
+          _boss = {obj: meshAnim , velocity: 0, tamano : 1, target: objetivo, status : 0 , life:BOSS_LIFE, vive:1};
 
         }
 
@@ -920,7 +1103,7 @@ function showButtons(style) {
         mesh.castShadow = true;
         mesh.receiveShadow = true;
 
-        scene2.add( mesh );
+        // scene2.add( mesh );
 
         var loader = new THREE.JSONLoader();
 
@@ -1014,7 +1197,7 @@ function showButtons(style) {
 
 
           object.rotation.y = Math.PI;
-          group_ia.add( object );
+          // group_ia.add( object );
 
         }, onProgress, onError );
 
@@ -1101,7 +1284,7 @@ function showButtons(style) {
         loader.load( "/static/three.js/examples/models/animated/monster/monster.js", function ( geometry , materials ) {
           morphColorsToFaceColors( geometry );
           for ( var i = - 800; i < 800; i += 70 ) {
-            addMorph( geometry, 50, 1000, i, FLOOR, i, materials );
+            addMorph( geometry, 50, 1000, i, FLOOR, Math.random() * (-1300 + 1800) - 1300, materials );
           }
         } );
 
@@ -1181,7 +1364,9 @@ scene2.add( vida_casa2 );
 
 
         requestAnimationFrame( animate );
+
         THREE.AnimationHandler.update( 0.1 );
+        
         THREE.glTFAnimator.update();
 
         if ( moveForward ){
@@ -1243,14 +1428,40 @@ scene2.add( vida_casa2 );
 
         }
 
+        var ungrow = 0;
+
+        if (valor_respuesta == 1){
+          ungrow = 1;
+          valor_respuesta = 0;
+        }
+
         for (var i = enemigos.length - 1; i >= 0; i--) {
+        
             enemigos[i].obj.material.color.setHex( 0xffffff );         
+          
+            if(ungrow == 1){
+              // console.log("ungrow");
+              //// REDUCCION
+
+              if (enemigos[i].obj.scale.x >= 0.02){
+                enemigos[i].obj.scale.x -= 0.005;
+                enemigos[i].obj.scale.y -= 0.005;
+                enemigos[i].obj.scale.z -= 0.005;
+              }
+
+              if (enemigos[i].velocity > 0.5){
+                enemigos[i].velocity -= Math.random()/2;
+              }            
+            }
+
         };
 
         for (var i = houses.length - 1; i >= 0; i--) {
             houses[i].material.color.setHex(0xffffff)
+          _boss.obj.material.color.setHex(0xdddddd);
 
         };
+
 
         if(there_shots){
             // console.log("entra!");
@@ -1273,7 +1484,7 @@ scene2.add( vida_casa2 );
               dist = lineDistance( [enemigos[j].obj.position.x , enemigos[j].obj.position.z] , [shots[i].position.x , shots[i].position.z] );
               if(dist < 50){
 
-                console.log("le dio a uno!");
+                // console.log("le dio a uno!");
                 shots[i].position.z = 2000;
                 delete shots[i];
                 
@@ -1295,6 +1506,25 @@ scene2.add( vida_casa2 );
               // console.log(dist);
             };
 
+            dist = lineDistance ( [_boss.obj.position.x, _boss.obj.position.z], [shots[i].position.x, shots[i].position.z] );
+            if(dist < 100){
+              console.log("le dio al boss!!");
+              shots[i].position.z = 2000;
+              delete shots[i];
+
+              _boss.life -= 1;
+
+              console.log(_boss.life);
+
+              _boss.obj.material.color.setHex(0xff0000);
+              shots.splice(i,1);
+              if(_boss.life <= 0){
+                _boss.vive = -1;
+              _boss.obj.position.z = -3000;
+
+              }
+              break;
+            }
 
           
           }
@@ -1307,6 +1537,19 @@ scene2.add( vida_casa2 );
 
 
         if(vidas == 0){
+
+            document.getElementById('blocker').style.display = 'block';
+
+            $('#blocker').append('<div id="instructions"><h1> Loser </h1> <br /> <br /></div>');
+            
+            for (var i = enemigos.length - 1; i >= 0; i--) {
+              enemigos[i].velocity = 0;
+            };
+
+        document.addEventListener( 'keydown', onKeyDown, false );
+
+
+
           // console.log("PERDISTE");
           // alert("PERDISTE!");
         }
@@ -1336,21 +1579,21 @@ function lineDistance( point1, point2 )
 
       function render() {
 
+// var flagWin = 1;
+ 
+//      if (flagWin == 1){
+//        document.getElementById('blocker').style.display = 'block';
+//      }
+ 
+ 
+//      function regresar() {
+//        document.getElementById('blocker').style.display = 'none';
+//      }
 
 
          var delta = clock.getDelta();
-        // for ( var i = 0; i < morphs.length; i ++ ) {
-        //   // console.log(morphs[0].position);
-        //   morph = morphs[ i ];
-        //   morph.updateAnimation( 1000 * delta );
-        //   morph.position.z += morph.speed * delta;
-        //   if ( morph.position.z  > 2000 )  {
-        //     morph.position.z = -10 - Math.random() * 500;
-        //   }
-        // }
 
-
-        if(reiniciados >= 100){
+        if(reiniciados >= MUERTES){
           // console.log("GANASTE!");
           _boss.status = 1;
           // console.log("status boss" , _boss.status);
@@ -1358,11 +1601,34 @@ function lineDistance( point1, point2 )
         }
 
 
+        if (_boss.vive == -1){
+              _boss.obj.position.z = -3000;
+
+            console.log("MURIO EL BOSS");
+            _boss.velocity = 0;
+
+            document.getElementById('blocker').style.display = 'block';
+
+            $('#blocker').append('<div id="instructions"><h1> Victoria ! </h1><br></br><h3> Venciste al Boss</h3> <br /> <br /></div>');
+
+
+            document.addEventListener( 'keydown', onKeyDown, false );
+
+            
+            for (var i = enemigos.length - 1; i >= 0; i--) {
+              enemigos[i].velocity = 0;
+            };
+
+            
+        }
+
+
         for (var i = enemigos.length - 1; i >= 0; i--) {
           
 
-
-          enemigos[i].obj.updateAnimation(1000*delta);
+          if (vidas > 0 && _boss.vive != -1){
+            enemigos[i].obj.updateAnimation(1000*delta);
+          }
 
           if(enemigos[i].obj.position.z >= 2000){
             console.log('reiniciar operaciones')
@@ -1422,10 +1688,7 @@ function lineDistance( point1, point2 )
           else{// Cuando bichos cerca de la casa
             // houses[enemigos[i].target].life -= 1;
 
-            houses[enemigos[i].target].material.color.setHex(0xff0000)
-
-
-            console.log(houses[enemigos[i].target].children)
+            houses[enemigos[i].target].material.color.setHex(0xff0000);
 
 
 
@@ -1461,22 +1724,15 @@ function lineDistance( point1, point2 )
         };
 
         if(_boss.status == 1){
+
           _boss.obj.position.y = -240;
           _boss.obj.updateAnimation(1000*delta);
           _boss.obj.position.z += 1;
-
 
         }
 
 
 
-        // group_enemies.position.z += 1;
-
-
-        // camera.position.x += (mouseX - camera.position.x) * .05;
-
-        // group.rotation.y += ( targetRotation - group.rotation.y ) * 0.05;
-        // renderer.render( scene, camera );
         renderer2.render( scene2, camera);
 
       }
